@@ -1,0 +1,19 @@
+{
+  "id": "communist-manifesto",
+  "title": "The Communist Manifesto",
+  "authors": [
+    "Karl Marx",
+    "Friedrich Engels"
+  ],
+  "year": 1848,
+  "source": "Project Gutenberg EBook #61",
+  "source_url": "https://www.gutenberg.org/ebooks/61",
+  "license": "Public domain",
+  "translator": "Samuel Moore",
+  "aliases": [
+    "manifesto",
+    "communist manifesto",
+    "the communist manifesto"
+  ],
+  "description": "Published in 1848, the Manifesto presents the materialist conception of history and a programmatic account of the communist political project."
+}
