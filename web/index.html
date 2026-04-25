@@ -11,32 +11,41 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header class="site-bar">
-      <a class="wordmark" href="#top">EMARX</a>
+    <header class="terminal-top">
+      <a class="wordmark" href="#top">tty1: EMARX</a>
       <nav aria-label="Primary navigation">
-        <a href="#about">About</a>
-        <a href="#install">Install</a>
-        <a href="#reader-demo">Reader Demo</a>
-        <a href="#works">Works</a>
-        <a href="#support">Support</a>
-        <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">GitHub</a>
+        <a href="#about">cat about</a>
+        <a href="#install">install</a>
+        <a href="#reader-demo">run demo</a>
+        <a href="#works">ls works</a>
+        <a href="#support">tip jar</a>
+        <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">git remote</a>
       </nav>
     </header>
 
-    <main id="top">
-      <section class="hero terminal-section" aria-labelledby="hero-title">
-        <div class="prompt-line">$ emarx intro</div>
-        <h1 id="hero-title">EMARX</h1>
-        <p class="subtitle">Read Marx from the command line</p>
+    <main id="top" class="terminal-shell">
+      <div class="terminal-titlebar">
+        <span>emarx.space:/usr/local/bin/emarx</span>
+        <span>ONLINE</span>
+      </div>
+
+      <section class="console-block hero" aria-labelledby="hero-title">
+        <p class="cmd"><span>$</span> emarx intro</p>
+        <div class="hero-output">
+          <div>
+            <h1 id="hero-title">EMARX</h1>
+            <p class="subtitle">Read Marx from the command line</p>
+          </div>
+          <div class="system-readout" aria-label="Startup output">
+            <p><b>STATUS</b> offline corpus mounted</p>
+            <p><b>INDEX</b> titles / sections / paragraphs</p>
+            <p><b>MODE</b> terminal reader</p>
+          </div>
+        </div>
         <p class="hero-copy">
           EMARX is an offline-first terminal reader for Marx, Engels, and related public-domain
           texts. Browse works, search passages, and read in a compact command-line interface.
         </p>
-        <div class="boot-log" aria-label="Startup output">
-          <p><span>loading</span> bundled corpus ... ok</p>
-          <p><span>indexing</span> titles, sections, paragraphs ... ok</p>
-          <p><span>mode</span> offline reader ready</p>
-        </div>
         <div class="command-actions">
           <a class="command-link primary" href="#install">Install</a>
           <a class="command-link" href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">
@@ -45,29 +54,30 @@
         </div>
       </section>
 
-      <section id="install" class="terminal-section split-section" aria-labelledby="install-title">
-        <div>
-          <p class="section-kicker">install</p>
-          <h2 id="install-title">Run EMARX locally</h2>
-          <p>
-            Install the native Rust CLI/TUI with Cargo, then launch the reader from any terminal.
-          </p>
-        </div>
-        <div class="terminal-block" aria-label="Installation commands">
-          <div class="terminal-block-title">bash</div>
-          <pre><code>cargo install --git https://github.com/jasonpersinger/emarx
+      <section id="install" class="console-block install-block" aria-labelledby="install-title">
+        <p class="cmd"><span>$</span> cargo install --git https://github.com/jasonpersinger/emarx</p>
+        <div class="console-output install-grid">
+          <div>
+            <p class="section-kicker">INSTALL</p>
+            <h2 id="install-title">Run EMARX locally</h2>
+            <p>Install the native Rust CLI/TUI with Cargo, then launch the reader from any terminal.</p>
+          </div>
+          <div class="terminal-block" aria-label="Installation commands">
+            <pre><code>cargo install --git https://github.com/jasonpersinger/emarx
 emarx</code></pre>
-        </div>
-        <div class="requirements">
-          <p><span>requires</span> Rust and Cargo</p>
-          <p><span>also try</span> emarx list · emarx search "commodity fetishism" · emarx read manifesto</p>
+          </div>
+          <div class="requirements">
+            <p><span>requires</span> Rust and Cargo</p>
+            <p><span>also try</span> emarx list / emarx search "commodity fetishism" / emarx read manifesto</p>
+          </div>
         </div>
       </section>
 
-      <section id="reader-demo" class="terminal-section" aria-labelledby="reader-title">
-        <div class="section-head">
+      <section id="reader-demo" class="console-block" aria-labelledby="reader-title">
+        <p class="cmd"><span>$</span> emarx --reader-demo</p>
+        <div class="console-output reader-intro">
           <div>
-            <p class="section-kicker">reader demo</p>
+            <p class="section-kicker">READER DEMO</p>
             <h2 id="reader-title">Terminal reader preview</h2>
           </div>
           <p>
@@ -77,7 +87,7 @@ emarx</code></pre>
         </div>
 
         <div class="terminal-window">
-          <div class="window-title">emarx --reader-demo</div>
+          <div class="window-title">process: emarx --reader-demo</div>
           <div id="reader" class="reader-demo">
             <header class="top-status" aria-label="Application header">
               <span>EMARX</span>
@@ -139,56 +149,65 @@ emarx</code></pre>
         </div>
       </section>
 
-      <section id="about" class="terminal-section split-section" aria-labelledby="about-title">
-        <div>
-          <p class="section-kicker">about</p>
-          <h2 id="about-title">A reader for difficult, necessary texts</h2>
-        </div>
-        <div class="about-copy">
-          <p>
-            Marx is not only a name attached to politics. He was a relentless critic of work,
-            money, property, history, and the systems that teach people to mistake exploitation
-            for common sense. His writing can be dense, funny, furious, technical, and startlingly
-            alive.
-          </p>
-          <p>
-            EMARX is built around the idea that these texts deserve a quiet, durable reading
-            environment: no feed, no account, no recommendation engine, no decoration competing
-            with the page. Just a terminal, a corpus, search, bookmarks, and source notes.
-          </p>
-          <p>
-            The goal is to make public-domain Marx and Engels texts easier to keep close at hand,
-            while treating sources and copyright status with care. The project starts small on
-            purpose so the library can stay auditable as it grows.
-          </p>
+      <section id="about" class="console-block" aria-labelledby="about-title">
+        <p class="cmd"><span>$</span> cat ABOUT.md</p>
+        <div class="console-output about-grid">
+          <div>
+            <p class="section-kicker">ABOUT</p>
+            <h2 id="about-title">A reader for difficult, necessary texts</h2>
+          </div>
+          <div class="about-copy">
+            <p>
+              Marx is not only a name attached to politics. He was a relentless critic of work,
+              money, property, history, and the systems that teach people to mistake exploitation
+              for common sense. His writing can be dense, funny, furious, technical, and startlingly
+              alive.
+            </p>
+            <p>
+              EMARX is built around the idea that these texts deserve a quiet, durable reading
+              environment: no feed, no account, no recommendation engine, no decoration competing
+              with the page. Just a terminal, a corpus, search, bookmarks, and source notes.
+            </p>
+            <p>
+              The goal is to make public-domain Marx and Engels texts easier to keep close at hand,
+              while treating sources and copyright status with care. The project starts small on
+              purpose so the library can stay auditable as it grows.
+            </p>
+          </div>
         </div>
       </section>
 
-      <section id="works" class="terminal-section" aria-labelledby="works-title">
-        <p class="section-kicker">works</p>
-        <h2 id="works-title">Included starter corpus</h2>
-        <ul class="works-list">
-          <li>The Communist Manifesto</li>
-          <li>Wage-Labour and Capital</li>
-          <li>Value, Price and Profit</li>
-          <li>Critique of the Gotha Programme</li>
-          <li>The Eighteenth Brumaire of Louis Bonaparte</li>
-          <li>Theses on Feuerbach</li>
-          <li>Preface to A Contribution to the Critique of Political Economy</li>
-          <li>Capital, Volume I</li>
-        </ul>
+      <section id="works" class="console-block" aria-labelledby="works-title">
+        <p class="cmd"><span>$</span> emarx list</p>
+        <div class="console-output">
+          <p class="section-kicker">WORKS</p>
+          <h2 id="works-title">Included starter corpus</h2>
+          <ol class="works-list">
+            <li>The Communist Manifesto</li>
+            <li>Wage-Labour and Capital</li>
+            <li>Value, Price and Profit</li>
+            <li>Critique of the Gotha Programme</li>
+            <li>The Eighteenth Brumaire of Louis Bonaparte</li>
+            <li>Theses on Feuerbach</li>
+            <li>Preface to A Contribution to the Critique of Political Economy</li>
+            <li>Capital, Volume I</li>
+          </ol>
+        </div>
       </section>
 
-      <section id="support" class="terminal-section support-section" aria-labelledby="support-title">
-        <p class="section-kicker">support</p>
-        <h2 id="support-title">Tip jar</h2>
-        <p>
-          EMARX is a small independent project. Support helps with hosting, development time,
-          and the slow work of expanding the library carefully.
-        </p>
-        <a class="command-link primary" href="https://ko-fi.com/emarx" target="_blank" rel="noreferrer">
-          Support on Ko-fi
-        </a>
+      <section id="support" class="console-block support-section" aria-labelledby="support-title">
+        <p class="cmd"><span>$</span> ./support-emarx</p>
+        <div class="console-output">
+          <p class="section-kicker">SUPPORT</p>
+          <h2 id="support-title">Tip jar</h2>
+          <p>
+            EMARX is a small independent project. Support helps with hosting, development time,
+            and the slow work of expanding the library carefully.
+          </p>
+          <a class="command-link primary" href="https://ko-fi.com/emarx" target="_blank" rel="noreferrer">
+            Support on Ko-fi
+          </a>
+        </div>
       </section>
     </main>
 
