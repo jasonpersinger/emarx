@@ -12,65 +12,62 @@
   </head>
   <body>
     <div class="scanline" aria-hidden="true"></div>
-    <div class="terminal-shell">
-      <header class="topbar">
-        <div>
+    <div class="page">
+      <header class="masthead">
+        <div class="book-cover" aria-hidden="true">
+          <div class="book-spine"></div>
+          <div class="book-symbol">☭</div>
+          <div class="book-title">EMARX</div>
+        </div>
+
+        <div class="masthead-copy">
           <p class="prompt">jason@emarx.space:~$ emarx</p>
           <h1>EMARX</h1>
-          <p>A terminal reader for Marx, Engels, and related public-domain texts.</p>
+          <p class="tagline">A terminal reader for Marx, Engels, and related public-domain texts.</p>
+          <nav class="top-actions" aria-label="Project links">
+            <a href="#reader">Open reader</a>
+            <a href="#install">Install CLI</a>
+            <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">GitHub</a>
+          </nav>
         </div>
-        <nav class="top-actions" aria-label="Project links">
-          <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">GitHub</a>
-          <a href="#install">Install CLI</a>
-          <a href="#reader">Web reader</a>
-        </nav>
       </header>
 
-      <section class="splash-grid">
-        <div class="terminal-card book-card" aria-label="EMARX red book cover">
-          <div class="book-cover">
-            <div class="book-spine"></div>
-            <div class="book-symbol">☭</div>
-            <div class="book-title">EMARX</div>
-          </div>
-        </div>
-
-        <section id="install" class="terminal-card install-card">
-          <div class="card-title">install</div>
-          <p>Install the native Rust CLI/TUI and read offline from your terminal.</p>
+      <section id="install" class="install-bar" aria-label="Install EMARX">
+        <div>
+          <p class="panel-label">install native CLI/TUI</p>
           <pre><code>cargo install --git https://github.com/jasonpersinger/emarx
 emarx</code></pre>
-          <div class="install-links">
-            <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">Repository</a>
-            <a href="https://github.com/jasonpersinger/emarx#install-and-run" target="_blank" rel="noreferrer">Instructions</a>
-          </div>
-        </section>
-
-        <section class="terminal-card quick-card">
-          <div class="card-title">commands</div>
-          <pre><code>emarx list
-emarx read manifesto
+        </div>
+        <div>
+          <p class="panel-label">common commands</p>
+          <pre><code>emarx read manifesto
 emarx read "capital vol 1" chapter 15
-emarx search "commodity fetishism"
-emarx bookmarks add capital 1</code></pre>
-        </section>
+emarx search "commodity fetishism"</code></pre>
+        </div>
       </section>
 
-      <main id="reader" class="app-shell">
-        <aside class="sidebar terminal-card" aria-label="Library">
-          <div class="panel-title">library</div>
-          <label class="search-label" for="searchInput">/ search</label>
+      <main id="reader" class="reader-layout">
+        <aside class="panel library-panel" aria-label="Library">
+          <div class="panel-header">library</div>
+          <label class="field-label" for="searchInput">/ search corpus</label>
           <input id="searchInput" class="search-input" type="search" placeholder="commodity fetishism" />
-          <nav>
-            <div class="nav-title">works</div>
-            <div id="workList" class="work-list"></div>
-          </nav>
+          <div class="nav-title">works</div>
+          <div id="workList" class="work-list"></div>
         </aside>
 
-        <section class="reader-pane">
-          <header class="reader-header terminal-card">
+        <aside class="panel sections-panel" aria-label="Sections">
+          <div class="panel-header panel-header-row">
+            <span>sections</span>
+            <span id="progressLabel">0%</span>
+          </div>
+          <div class="progress"><div id="progressBar"></div></div>
+          <div id="sectionList" class="section-list"></div>
+        </aside>
+
+        <section class="panel text-panel" aria-label="Reader">
+          <header class="reader-header">
             <div>
-              <p class="kicker">selected work</p>
+              <p class="panel-label">selected work</p>
               <h2 id="workTitle">Loading library...</h2>
               <p id="workMeta"></p>
             </div>
@@ -81,25 +78,12 @@ emarx bookmarks add capital 1</code></pre>
             </div>
           </header>
 
-          <div class="content-grid">
-            <aside class="sections-panel terminal-card" aria-label="Sections">
-              <div class="panel-heading">
-                <h3>sections</h3>
-                <span id="progressLabel">0%</span>
-              </div>
-              <div class="progress"><div id="progressBar"></div></div>
-              <div id="sectionList" class="section-list"></div>
-            </aside>
-
-            <article class="text-panel terminal-card">
-              <div id="searchResults" class="search-results" hidden></div>
-              <div class="section-heading">
-                <p id="sectionNumber"></p>
-                <h3 id="sectionTitle"></h3>
-              </div>
-              <div id="paragraphs" class="paragraphs"></div>
-            </article>
+          <div id="searchResults" class="search-results" hidden></div>
+          <div class="section-heading">
+            <p id="sectionNumber"></p>
+            <h3 id="sectionTitle"></h3>
           </div>
+          <div id="paragraphs" class="paragraphs"></div>
         </section>
       </main>
     </div>
