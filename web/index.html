@@ -11,83 +11,161 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <section id="splash" class="screen splash-screen" aria-label="EMARX startup screen">
-      <div class="splash-book" role="button" tabindex="0" aria-controls="reader">
-        <div class="book-spine" aria-hidden="true"></div>
-        <div class="book-pages" aria-hidden="true"></div>
-        <div class="book-copy">
-          <div class="book-mark" aria-hidden="true">☭</div>
-          <h1>EMARX</h1>
-          <p>READ MARX FROM THE COMMAND LINE</p>
+    <header class="site-bar">
+      <a class="wordmark" href="#top">EMARX</a>
+      <nav aria-label="Primary navigation">
+        <a href="#about">About</a>
+        <a href="#install">Install</a>
+        <a href="#reader-demo">Reader Demo</a>
+        <a href="#works">Works</a>
+        <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">GitHub</a>
+      </nav>
+    </header>
+
+    <main id="top">
+      <section class="hero terminal-section" aria-labelledby="hero-title">
+        <div class="prompt-line">jason@emarx.space:~$ emarx intro</div>
+        <h1 id="hero-title">EMARX</h1>
+        <p class="subtitle">Read Marx from the command line</p>
+        <p class="hero-copy">
+          EMARX is an offline-first terminal reader for Marx, Engels, and related public-domain
+          texts. Browse works, search passages, and read in a compact command-line interface.
+        </p>
+        <div class="command-actions">
+          <a class="command-link primary" href="#install">Install</a>
+          <a class="command-link" href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">
+            View on GitHub
+          </a>
         </div>
-      </div>
-      <div class="splash-footer">
-        <p>A terminal reader for Marx, Engels, and related public-domain texts.</p>
-        <p>Press Enter to open the library. Esc/q quits the native app.</p>
-        <p class="install-line">cargo install --git https://github.com/jasonpersinger/emarx</p>
-      </div>
-    </section>
-
-    <main id="reader" class="screen reader-screen" hidden>
-      <header class="top-status" aria-label="Application header">
-        <span>EMARX</span>
-        <span>A terminal reader for Marx, Engels, and related public-domain texts.</span>
-      </header>
-
-      <section class="reader-grid" aria-label="EMARX web reader">
-        <aside class="pane works-pane" aria-label="Works">
-          <div class="pane-title">Works</div>
-          <label class="search-label" for="searchInput">/ search corpus</label>
-          <input id="searchInput" class="search-input" type="search" placeholder="commodity fetishism" />
-          <div id="workList" class="list"></div>
-        </aside>
-
-        <aside class="pane sections-pane" aria-label="Sections">
-          <div class="pane-title pane-title-row">
-            <span>Sections</span>
-            <span id="progressLabel">0%</span>
-          </div>
-          <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
-          <div id="sectionList" class="list"></div>
-        </aside>
-
-        <section class="pane text-pane" aria-label="Text">
-          <div class="pane-title pane-title-row">
-            <span>Text</span>
-            <span id="sectionNumber"></span>
-          </div>
-          <div class="reader-meta">
-            <div>
-              <h2 id="workTitle">Loading library...</h2>
-              <p id="workMeta"></p>
-            </div>
-            <nav class="reader-actions" aria-label="Reader actions">
-              <button id="themeButton" type="button">theme</button>
-              <button id="bookmarkButton" type="button">bookmark</button>
-              <a id="sourceLink" href="#" target="_blank" rel="noreferrer">source</a>
-            </nav>
-          </div>
-          <div class="text-scroll" tabindex="0">
-            <div id="searchResults" class="search-results" hidden></div>
-            <div class="section-heading">
-              <h3 id="sectionTitle"></h3>
-            </div>
-            <div id="paragraphs" class="paragraphs"></div>
-          </div>
-        </section>
       </section>
 
-      <footer class="bottom-status" aria-label="Keyboard help">
-        <span>↑/↓ navigate</span>
-        <span>←/→ or Tab switch</span>
-        <span>Enter select</span>
-        <span>/ search</span>
-        <span>t theme</span>
-        <span>b bookmark</span>
-        <span>q splash</span>
-        <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">install CLI</a>
-      </footer>
+      <section id="install" class="terminal-section split-section" aria-labelledby="install-title">
+        <div>
+          <p class="section-kicker">install</p>
+          <h2 id="install-title">Run EMARX locally</h2>
+          <p>
+            Install the native Rust CLI/TUI with Cargo, then launch the reader from any terminal.
+          </p>
+        </div>
+        <div class="terminal-block" aria-label="Installation commands">
+          <div class="terminal-block-title">bash</div>
+          <pre><code>cargo install --git https://github.com/jasonpersinger/emarx
+emarx</code></pre>
+        </div>
+        <div class="requirements">
+          <p><span>requires</span> Rust and Cargo</p>
+          <p><span>also try</span> emarx list · emarx search "commodity fetishism" · emarx read manifesto</p>
+        </div>
+      </section>
+
+      <section id="reader-demo" class="terminal-section" aria-labelledby="reader-title">
+        <div class="section-head">
+          <div>
+            <p class="section-kicker">reader demo</p>
+            <h2 id="reader-title">Terminal reader preview</h2>
+          </div>
+          <p>
+            A contained browser demo of the CLI layout. The installed app runs as a native
+            full-screen terminal interface.
+          </p>
+        </div>
+
+        <div class="terminal-window">
+          <div class="window-title">emarx --reader-demo</div>
+          <div id="reader" class="reader-demo">
+            <header class="top-status" aria-label="Application header">
+              <span>EMARX</span>
+              <span>A terminal reader for Marx, Engels, and related public-domain texts.</span>
+            </header>
+
+            <section class="reader-grid" aria-label="EMARX web reader">
+              <aside class="pane works-pane" aria-label="Works">
+                <div class="pane-title">Works</div>
+                <label class="search-label" for="searchInput">/ search corpus</label>
+                <input id="searchInput" class="search-input" type="search" placeholder="commodity fetishism" />
+                <div id="workList" class="list"></div>
+              </aside>
+
+              <aside class="pane sections-pane" aria-label="Sections">
+                <div class="pane-title pane-title-row">
+                  <span>Sections</span>
+                  <span id="progressLabel">0%</span>
+                </div>
+                <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+                <div id="sectionList" class="list"></div>
+              </aside>
+
+              <section class="pane text-pane" aria-label="Text">
+                <div class="pane-title pane-title-row">
+                  <span>Text</span>
+                  <span id="sectionNumber"></span>
+                </div>
+                <div class="reader-meta">
+                  <div>
+                    <h3 id="workTitle">Loading library...</h3>
+                    <p id="workMeta"></p>
+                  </div>
+                  <nav class="reader-actions" aria-label="Reader actions">
+                    <button id="themeButton" type="button">theme</button>
+                    <button id="bookmarkButton" type="button">bookmark</button>
+                    <a id="sourceLink" href="#" target="_blank" rel="noreferrer">source</a>
+                  </nav>
+                </div>
+                <div class="text-scroll" tabindex="0">
+                  <div id="searchResults" class="search-results" hidden></div>
+                  <div class="section-heading">
+                    <h4 id="sectionTitle"></h4>
+                  </div>
+                  <div id="paragraphs" class="paragraphs"></div>
+                </div>
+              </section>
+            </section>
+
+            <footer class="bottom-status" aria-label="Keyboard help">
+              <span>↑/↓ navigate</span>
+              <span>←/→ switch</span>
+              <span>/ search</span>
+              <span>t theme</span>
+              <span>b bookmark</span>
+              <a href="#install">install CLI</a>
+            </footer>
+          </div>
+        </div>
+      </section>
+
+      <section id="about" class="terminal-section split-section" aria-labelledby="about-title">
+        <div>
+          <p class="section-kicker">about</p>
+          <h2 id="about-title">A compact humanities reader for the terminal</h2>
+        </div>
+        <p>
+          EMARX bundles a starter corpus of public-domain or freely redistributable texts and
+          provides list, read, search, random passage, source metadata, bookmark, and resume
+          workflows without network access during normal use.
+        </p>
+      </section>
+
+      <section id="works" class="terminal-section" aria-labelledby="works-title">
+        <p class="section-kicker">works</p>
+        <h2 id="works-title">Included starter corpus</h2>
+        <ul class="works-list">
+          <li>The Communist Manifesto</li>
+          <li>Wage-Labour and Capital</li>
+          <li>Value, Price and Profit</li>
+          <li>Critique of the Gotha Programme</li>
+          <li>The Eighteenth Brumaire of Louis Bonaparte</li>
+          <li>Theses on Feuerbach</li>
+          <li>Preface to A Contribution to the Critique of Political Economy</li>
+          <li>Capital, Volume I</li>
+        </ul>
+      </section>
     </main>
+
+    <footer class="site-footer">
+      <span>EMARX</span>
+      <span>Public-domain and freely redistributable source texts only.</span>
+      <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">github.com/jasonpersinger/emarx</a>
+    </footer>
 
     <script src="./app.js" type="module"></script>
   </body>

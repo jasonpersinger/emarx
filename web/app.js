@@ -9,8 +9,6 @@ const state = {
 };
 
 const el = {
-  splash: document.querySelector("#splash"),
-  splashBook: document.querySelector(".splash-book"),
   reader: document.querySelector("#reader"),
   workList: document.querySelector("#workList"),
   sectionList: document.querySelector("#sectionList"),
@@ -44,35 +42,10 @@ async function fetchJson(url) {
 }
 
 function bindEvents() {
-  const openReader = () => {
-    el.splash.hidden = true;
-    el.reader.hidden = false;
-    el.workList.querySelector(".active")?.focus();
-  };
-
-  const openSplash = () => {
-    el.reader.hidden = true;
-    el.splash.hidden = false;
-    el.splashBook.focus();
-  };
-
-  el.splash.addEventListener("click", openReader);
-  el.splash.addEventListener("keydown", (event) => {
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault();
-      openReader();
-    }
-  });
-
   document.addEventListener("keydown", (event) => {
-    if (el.reader.hidden) return;
+    if (!el.reader.contains(document.activeElement)) return;
     const activeTag = document.activeElement?.tagName?.toLowerCase();
     if (activeTag === "input") return;
-
-    if (event.key.toLowerCase() === "q" && !el.reader.hidden) {
-      openSplash();
-      return;
-    }
 
     if (event.key === "/") {
       event.preventDefault();
@@ -120,8 +93,6 @@ function bindEvents() {
   });
 
   el.bookmarkButton.addEventListener("click", toggleBookmark);
-
-  if (window.location.hash === "#reader") openReader();
 }
 
 function focusNextPane(direction) {
