@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2021"
 description = "Read Marx from the command line."
 license = "MIT"
-repository = "https://example.invalid/emarx"
+repository = "https://github.com/jasonpersinger/emarx"
 
 [dependencies]
 anyhow = "1.0"
