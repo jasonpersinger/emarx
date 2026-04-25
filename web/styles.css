@@ -258,7 +258,7 @@ code {
 
 .reader-layout {
   display: grid;
-  grid-template-columns: 300px 320px minmax(0, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 18px;
   align-items: start;
 }
@@ -386,7 +386,7 @@ code {
 
 .reader-header {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: 1fr;
   gap: 18px;
   align-items: start;
   padding: 18px;
@@ -397,12 +397,12 @@ code {
 .reader-header h2 {
   margin: 6px 0 8px;
   color: var(--text);
-  font-size: clamp(28px, 4vw, 48px);
+  font-size: clamp(28px, 3vw, 42px);
   line-height: 1.08;
 }
 
 .actions {
-  justify-content: flex-end;
+  justify-content: start;
 }
 
 .search-results {
@@ -427,7 +427,6 @@ code {
 }
 
 .paragraphs {
-  max-width: 88ch;
   padding: 0 24px 6px;
   font-size: 17px;
   line-height: 1.68;
@@ -446,7 +445,7 @@ mark,
 
 @media (max-width: 1180px) {
   .reader-layout {
-    grid-template-columns: 280px minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .sections-panel {
