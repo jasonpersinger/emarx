@@ -148,6 +148,10 @@ struct App<'a> {
     work_hits: Vec<SearchHit>,
     hit_index: usize,
     status: String,
+    show_splash: bool,
+    show_help: bool,
+    show_bookmarks: bool,
+    bookmark_index: usize,
 }
 
 impl<'a> App<'a> {
@@ -167,6 +171,10 @@ impl<'a> App<'a> {
             work_hits: Vec::new(),
             hit_index: 0,
             status: String::from("Ready"),
+            show_splash: true,
+            show_help: false,
+            show_bookmarks: false,
+            bookmark_index: 0,
         };
         app.restore_position();
         app
@@ -224,6 +232,30 @@ impl<'a> App<'a> {
     }
 
     fn handle_key(&mut self, key: KeyEvent) -> Result<bool> {
+        if self.show_splash {
+            match key.code {
+                KeyCode::Esc | KeyCode::Char('q') => return Ok(true),
+                _ => {
+                    self.show_splash = false;
+                    return Ok(false);
+                }
+            }
+        }
+
+        if self.show_help {
+            match key.code {
+                KeyCode::Esc | KeyCode::Char('?') | KeyCode::Char('q') => {
+                    self.show_help = false;
+                }
+                _ => {}
+            }
+            return Ok(false);
+        }
+
+        if self.show_bookmarks {
+            return Ok(self.handle_bookmark_key(key));
+        }
+
         if self.search_mode {
             return Ok(self.handle_search_key(key));
         }
@@ -236,6 +268,10 @@ impl<'a> App<'a> {
             KeyCode::Char('q') => return Ok(true),
             KeyCode::Up => self.move_up(),
             KeyCode::Down => self.move_down(),
+            KeyCode::PageUp => self.page_up(),
+            KeyCode::PageDown => self.page_down(),
+            KeyCode::Home => self.home(),
+            KeyCode::End => self.end(),
             KeyCode::Left => self.prev_panel(),
             KeyCode::Right => self.next_panel(),
             KeyCode::Tab => self.next_panel(),
@@ -260,14 +296,54 @@ impl<'a> App<'a> {
                     "Bookmark removed".to_string()
                 };
             }
+            KeyCode::Char('B') => {
+                self.show_bookmarks = true;
+                self.bookmark_index = self
+                    .bookmark_index
+                    .min(self.settings.bookmarks.len().saturating_sub(1));
+            }
             KeyCode::Char('g') => {
                 self.jump_mode = true;
                 self.jump_input.clear();
+            }
+            KeyCode::Char('?') => {
+                self.show_help = true;
             }
             _ => {}
         }
 
         Ok(false)
+    }
+
+    fn handle_bookmark_key(&mut self, key: KeyEvent) -> bool {
+        match key.code {
+            KeyCode::Esc | KeyCode::Char('B') | KeyCode::Char('q') => {
+                self.show_bookmarks = false;
+            }
+            KeyCode::Up => {
+                self.bookmark_index = self.bookmark_index.saturating_sub(1);
+            }
+            KeyCode::Down => {
+                if self.bookmark_index + 1 < self.settings.bookmarks.len() {
+                    self.bookmark_index += 1;
+                }
+            }
+            KeyCode::Enter => {
+                self.jump_to_bookmark();
+                self.show_bookmarks = false;
+            }
+            KeyCode::Char('d') | KeyCode::Delete => {
+                if !self.settings.bookmarks.is_empty() {
+                    self.settings.bookmarks.remove(self.bookmark_index);
+                    self.bookmark_index = self
+                        .bookmark_index
+                        .min(self.settings.bookmarks.len().saturating_sub(1));
+                    self.status = "Bookmark deleted".to_string();
+                }
+            }
+            _ => {}
+        }
+        false
     }
 
     fn handle_search_key(&mut self, key: KeyEvent) -> bool {
@@ -371,6 +447,46 @@ impl<'a> App<'a> {
         self.persist_position();
     }
 
+    fn page_up(&mut self) {
+        if self.active_panel == ActivePanel::Text {
+            self.scroll = self.scroll.saturating_sub(10);
+            self.persist_position();
+        }
+    }
+
+    fn page_down(&mut self) {
+        if self.active_panel == ActivePanel::Text {
+            self.scroll = self.scroll.saturating_add(10);
+            self.persist_position();
+        }
+    }
+
+    fn home(&mut self) {
+        match self.active_panel {
+            ActivePanel::Works => {
+                self.work_index = 0;
+                self.section_index = 0;
+            }
+            ActivePanel::Sections => self.section_index = 0,
+            ActivePanel::Text => self.scroll = 0,
+        }
+        self.persist_position();
+    }
+
+    fn end(&mut self) {
+        match self.active_panel {
+            ActivePanel::Works => {
+                self.work_index = self.library.works().len().saturating_sub(1);
+                self.section_index = 0;
+            }
+            ActivePanel::Sections => {
+                self.section_index = self.current_work().sections.len().saturating_sub(1);
+            }
+            ActivePanel::Text => self.scroll = self.scroll.saturating_add(1000),
+        }
+        self.persist_position();
+    }
+
     fn next_panel(&mut self) {
         self.active_panel = match self.active_panel {
             ActivePanel::Works => ActivePanel::Sections,
@@ -457,10 +573,40 @@ impl<'a> App<'a> {
         }
     }
 
+    fn jump_to_bookmark(&mut self) {
+        if let Some(bookmark) = self.settings.bookmarks.get(self.bookmark_index) {
+            if let Some(work_index) = self
+                .library
+                .works()
+                .iter()
+                .position(|work| work.id == bookmark.work_id)
+            {
+                self.work_index = work_index;
+                if let Some(section_index) = self
+                    .current_work()
+                    .sections
+                    .iter()
+                    .position(|section| section.id == bookmark.section_id)
+                {
+                    self.section_index = section_index;
+                    self.scroll = 0;
+                    self.active_panel = ActivePanel::Text;
+                    self.status = "Jumped to bookmark".to_string();
+                    self.persist_position();
+                }
+            }
+        }
+    }
+
     fn render(&self, frame: &mut Frame) {
         let theme = self.current_theme();
         let full = frame.area();
         frame.render_widget(Block::default().style(Style::default().bg(theme.bg)), full);
+
+        if self.show_splash {
+            self.render_splash(frame, full);
+            return;
+        }
 
         let chunks = Layout::vertical([
             Constraint::Length(3),
@@ -519,6 +665,10 @@ impl<'a> App<'a> {
             self.render_popup(frame, "Search", &self.search_input, theme);
         } else if self.jump_mode {
             self.render_popup(frame, "Jump to Section", &self.jump_input, theme);
+        } else if self.show_help {
+            self.render_help(frame, theme);
+        } else if self.show_bookmarks {
+            self.render_bookmarks(frame, theme);
         }
     }
 
@@ -610,6 +760,182 @@ impl<'a> App<'a> {
             )
             .style(Style::default().fg(theme.fg).bg(theme.bg));
         frame.render_widget(widget, popup);
+    }
+
+    fn render_splash(&self, frame: &mut Frame, area: Rect) {
+        let bg = Color::Rgb(28, 5, 8);
+        let cover_red = Color::Rgb(158, 17, 31);
+        let spine_red = Color::Rgb(92, 8, 16);
+        let gold = Color::Rgb(245, 196, 74);
+        let paper = Color::Rgb(238, 224, 190);
+        let muted = Color::Rgb(204, 151, 137);
+
+        frame.render_widget(Block::default().style(Style::default().bg(bg)), area);
+
+        let layout = Layout::vertical([
+            Constraint::Min(1),
+            Constraint::Length(18),
+            Constraint::Length(5),
+            Constraint::Min(1),
+        ])
+        .split(area);
+        let book = centered_rect(52, 100, layout[1]);
+
+        let cover = Block::default()
+            .borders(Borders::ALL)
+            .border_type(BorderType::Thick)
+            .border_style(Style::default().fg(gold))
+            .style(Style::default().bg(cover_red));
+        frame.render_widget(cover, book);
+
+        if book.width > 12 && book.height > 5 {
+            let spine = Rect {
+                x: book.x + 2,
+                y: book.y + 1,
+                width: 3,
+                height: book.height.saturating_sub(2),
+            };
+            frame.render_widget(
+                Block::default().style(Style::default().bg(spine_red)),
+                spine,
+            );
+
+            let pages = Rect {
+                x: book.x + book.width.saturating_sub(4),
+                y: book.y + 2,
+                width: 2,
+                height: book.height.saturating_sub(4),
+            };
+            frame.render_widget(Block::default().style(Style::default().bg(paper)), pages);
+        }
+
+        let mark_size = if book.height < 12 { 1 } else { 2 };
+        let mut cover_lines = vec![Line::from("")];
+        for _ in 0..mark_size {
+            cover_lines.push(Line::from(vec![Span::styled(
+                "☭",
+                Style::default().fg(gold).bg(cover_red).bold(),
+            )]));
+        }
+        cover_lines.extend([
+            Line::from(vec![Span::styled(
+                "EMARX",
+                Style::default().fg(paper).bg(cover_red).bold(),
+            )]),
+            Line::from(""),
+            Line::from(vec![Span::styled(
+                "READ MARX FROM THE COMMAND LINE",
+                Style::default().fg(gold).bg(cover_red),
+            )]),
+        ]);
+
+        let title = Paragraph::new(Text::from(cover_lines))
+            .alignment(Alignment::Center)
+            .style(Style::default().bg(cover_red));
+        frame.render_widget(
+            title,
+            book.inner(Margin {
+                horizontal: 5,
+                vertical: 3,
+            }),
+        );
+
+        let footer = Paragraph::new(Text::from(vec![
+            Line::from(vec![Span::styled(
+                "A terminal reader for Marx, Engels, and related public-domain texts.",
+                Style::default().fg(paper).bg(bg),
+            )]),
+            Line::from(""),
+            Line::from(vec![Span::styled(
+                "Press any key to open the library.  Esc/q quits.",
+                Style::default().fg(muted).bg(bg),
+            )]),
+        ]))
+        .alignment(Alignment::Center)
+        .style(Style::default().bg(bg));
+        frame.render_widget(footer, layout[2]);
+    }
+
+    fn render_help(&self, frame: &mut Frame, theme: Theme) {
+        let area = centered_rect(70, 70, frame.area());
+        frame.render_widget(Clear, area);
+        let lines = vec![
+            Line::from(vec![Span::styled(
+                "EMARX Help",
+                Style::default().fg(theme.accent).bold(),
+            )]),
+            Line::from(""),
+            Line::from("Up/Down           Navigate the active panel"),
+            Line::from("Left/Right, Tab   Switch panels"),
+            Line::from("Enter             Select work/section or focus text"),
+            Line::from("PageUp/PageDown   Scroll text by a page"),
+            Line::from("Home/End          Jump to start/end of active panel"),
+            Line::from("/                 Search within current work"),
+            Line::from("n / N             Next/previous search result"),
+            Line::from("t                 Cycle themes"),
+            Line::from("b                 Toggle bookmark at current section"),
+            Line::from("B                 Open bookmarks"),
+            Line::from("g                 Jump to section number"),
+            Line::from("?                 Toggle this help"),
+            Line::from("q                 Quit"),
+            Line::from(""),
+            Line::from("In bookmarks: Up/Down select, Enter jumps, d deletes, Esc closes."),
+        ];
+        let widget = Paragraph::new(Text::from(lines))
+            .wrap(Wrap { trim: false })
+            .style(Style::default().fg(theme.fg).bg(theme.bg))
+            .block(
+                Block::default()
+                    .title("Help")
+                    .borders(Borders::ALL)
+                    .border_style(Style::default().fg(theme.accent))
+                    .style(Style::default().bg(theme.bg)),
+            );
+        frame.render_widget(widget, area);
+    }
+
+    fn render_bookmarks(&self, frame: &mut Frame, theme: Theme) {
+        let area = centered_rect(72, 70, frame.area());
+        frame.render_widget(Clear, area);
+
+        let items = if self.settings.bookmarks.is_empty() {
+            vec![ListItem::new("No bookmarks saved.")]
+        } else {
+            self.settings
+                .bookmarks
+                .iter()
+                .map(|bookmark| {
+                    let work_title = self
+                        .library
+                        .work_by_id(&bookmark.work_id)
+                        .map(|work| work.title.as_str())
+                        .unwrap_or(bookmark.work_id.as_str());
+                    ListItem::new(format!("{} — {}", work_title, bookmark.section_title))
+                })
+                .collect::<Vec<_>>()
+        };
+        let mut state = if self.settings.bookmarks.is_empty() {
+            ListState::default()
+        } else {
+            ListState::default().with_selected(Some(self.bookmark_index))
+        };
+        let widget = List::new(items)
+            .block(
+                Block::default()
+                    .title("Bookmarks  Enter jump  d delete  Esc close")
+                    .borders(Borders::ALL)
+                    .border_style(Style::default().fg(theme.accent))
+                    .style(Style::default().bg(theme.bg)),
+            )
+            .style(Style::default().fg(theme.fg).bg(theme.bg))
+            .highlight_style(
+                Style::default()
+                    .bg(theme.highlight_bg)
+                    .fg(theme.highlight_fg)
+                    .bold(),
+            )
+            .highlight_symbol("» ");
+        frame.render_stateful_widget(widget, area, &mut state);
     }
 
     fn panel_block(&self, title: &str, active: bool, theme: Theme) -> Block<'static> {

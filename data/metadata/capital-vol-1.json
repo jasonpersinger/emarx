@@ -1,1 +1,20 @@
-{"id":"capital-vol-1","title":"Capital, Volume I","authors":["Karl Marx"],"year":1867,"source":"Project Gutenberg eBook #3300","source_url":"https://www.gutenberg.org/ebooks/3300","license":"Public domain in the United States; Project Gutenberg License applies to the Gutenberg edition.","translator":"Samuel Moore and Edward Aveling","aliases":["capital","das kapital","capital 1","capital vol 1","capital volume 1"],"description":"Starter structured excerpts from the public-domain English translation hosted by Project Gutenberg. Modern editions and editorial matter are not bundled."}
+{
+  "id": "capital-vol-1",
+  "title": "Capital, Volume I",
+  "authors": [
+    "Karl Marx"
+  ],
+  "year": 1867,
+  "source": "Marxists Internet Archive transcription of the first English edition",
+  "source_url": "https://www.marxists.org/archive/marx/works/1867-c1/index.htm",
+  "license": "First English edition public domain; MIA transcription is freely available for redistribution. Verify jurisdiction before redistribution.",
+  "translator": "Samuel Moore and Edward Aveling; edited by Friedrich Engels",
+  "aliases": [
+    "capital",
+    "das kapital",
+    "capital 1",
+    "capital vol 1",
+    "capital volume 1"
+  ],
+  "description": "Chapter-level structured text from the public-domain first English translation. MIA navigation, transcription notes, and footnote blocks are not bundled."
+}

@@ -6,10 +6,10 @@ mod search;
 mod tui;
 
 use anyhow::{anyhow, Context, Result};
-use chrono::Local;
+use chrono::{Local, Utc};
 use clap::Parser;
-use cli::{parse_read_reference, Cli, Command};
-use config::ConfigStore;
+use cli::{parse_read_reference, BookmarkCommand, Cli, Command};
+use config::{Bookmark, ConfigStore};
 use crossterm::terminal;
 use library::{format_passage, format_work, Library};
 use search::SearchIndex;
@@ -39,6 +39,13 @@ fn main() -> Result<()> {
             Ok(())
         }
         Some(Command::Info { alias }) => show_info(&library, &alias.join(" ")),
+        Some(Command::Sections { alias }) => show_sections(&library, &alias.join(" ")),
+        Some(Command::Stats) => show_stats(&library),
+        Some(Command::Bookmarks { command }) => manage_bookmarks(
+            &library,
+            &mut config,
+            command.unwrap_or(BookmarkCommand::List),
+        ),
         Some(Command::Sources) => show_sources(&library),
         Some(Command::Intro) => tui::print_intro(io::stdout().is_terminal()),
         Some(Command::Config) => show_config(&config),
@@ -112,6 +119,157 @@ fn show_info(library: &Library, alias: &str) -> Result<()> {
     print_output(&output);
 
     Ok(())
+}
+
+fn show_sections(library: &Library, alias: &str) -> Result<()> {
+    let work = library
+        .resolve_work(alias)
+        .with_context(|| format!("no bundled work matched '{}'", alias))?;
+
+    let mut output = String::new();
+    output.push_str(&format!("{}\n", work.title));
+    output.push_str(&format!("{} section(s)\n\n", work.sections.len()));
+    for (index, section) in work.sections.iter().enumerate() {
+        let paragraph_count = section.paragraphs.len();
+        output.push_str(&format!(
+            "{:>2}. {}  [{} paragraph{}]\n",
+            index + 1,
+            section.title,
+            paragraph_count,
+            if paragraph_count == 1 { "" } else { "s" }
+        ));
+    }
+    print_output(&output);
+    Ok(())
+}
+
+fn show_stats(library: &Library) -> Result<()> {
+    let works = library.works().len();
+    let sections = library
+        .works()
+        .iter()
+        .map(|work| work.sections.len())
+        .sum::<usize>();
+    let paragraphs = library
+        .works()
+        .iter()
+        .flat_map(|work| &work.sections)
+        .map(|section| section.paragraphs.len())
+        .sum::<usize>();
+    let words = library
+        .works()
+        .iter()
+        .flat_map(|work| &work.sections)
+        .flat_map(|section| &section.paragraphs)
+        .map(|paragraph| paragraph.split_whitespace().count())
+        .sum::<usize>();
+
+    let mut output = String::new();
+    output.push_str("EMARX library statistics\n\n");
+    output.push_str(&format!("Works:      {}\n", works));
+    output.push_str(&format!("Sections:   {}\n", sections));
+    output.push_str(&format!("Paragraphs: {}\n", paragraphs));
+    output.push_str(&format!("Words:      {}\n", words));
+    print_output(&output);
+    Ok(())
+}
+
+fn manage_bookmarks(
+    library: &Library,
+    config: &mut ConfigStore,
+    command: BookmarkCommand,
+) -> Result<()> {
+    match command {
+        BookmarkCommand::List => list_bookmarks(library, config),
+        BookmarkCommand::Add { reference } => add_bookmark(library, config, &reference),
+        BookmarkCommand::Remove { number } => remove_bookmark(config, number),
+        BookmarkCommand::Clear => {
+            config.settings.bookmarks.clear();
+            config.save()?;
+            print_output("Bookmarks cleared.\n");
+            Ok(())
+        }
+    }
+}
+
+fn list_bookmarks(library: &Library, config: &ConfigStore) -> Result<()> {
+    let mut output = String::new();
+    if config.settings.bookmarks.is_empty() {
+        output.push_str("No bookmarks saved.\n");
+    } else {
+        for (index, bookmark) in config.settings.bookmarks.iter().enumerate() {
+            let work_title = library
+                .work_by_id(&bookmark.work_id)
+                .map(|work| work.title.as_str())
+                .unwrap_or(&bookmark.work_id);
+            output.push_str(&format!(
+                "{:>2}. {} — {}\n    Saved: {}\n    Open: emarx read {} {}\n",
+                index + 1,
+                work_title,
+                bookmark.section_title,
+                bookmark.saved_at,
+                bookmark.work_id,
+                bookmark_section_number(library, bookmark).unwrap_or(1)
+            ));
+        }
+    }
+    print_output(&output);
+    Ok(())
+}
+
+fn add_bookmark(library: &Library, config: &mut ConfigStore, reference: &[String]) -> Result<()> {
+    let (alias, section_number) = parse_read_reference(reference);
+    let work = library
+        .resolve_work(&alias)
+        .with_context(|| format!("no bundled work matched '{}'", alias))?;
+    let section_index = section_number.unwrap_or(1).saturating_sub(1);
+    let section = work
+        .sections
+        .get(section_index)
+        .ok_or_else(|| anyhow!("section {} not found in {}", section_index + 1, work.title))?;
+
+    if let Some(existing) = config
+        .settings
+        .bookmarks
+        .iter_mut()
+        .find(|bookmark| bookmark.work_id == work.id && bookmark.section_id == section.id)
+    {
+        existing.saved_at = Utc::now().to_rfc3339();
+        existing.section_title = section.title.clone();
+    } else {
+        config.settings.bookmarks.push(Bookmark {
+            work_id: work.id.clone(),
+            section_id: section.id.clone(),
+            section_title: section.title.clone(),
+            saved_at: Utc::now().to_rfc3339(),
+        });
+    }
+
+    config.save()?;
+    print_output(&format!("Bookmarked: {} — {}\n", work.title, section.title));
+    Ok(())
+}
+
+fn remove_bookmark(config: &mut ConfigStore, number: usize) -> Result<()> {
+    if number == 0 || number > config.settings.bookmarks.len() {
+        return Err(anyhow!("bookmark {} not found", number));
+    }
+    let removed = config.settings.bookmarks.remove(number - 1);
+    config.save()?;
+    print_output(&format!(
+        "Removed bookmark: {} — {}\n",
+        removed.work_id, removed.section_title
+    ));
+    Ok(())
+}
+
+fn bookmark_section_number(library: &Library, bookmark: &Bookmark) -> Option<usize> {
+    library.work_by_id(&bookmark.work_id).and_then(|work| {
+        work.sections
+            .iter()
+            .position(|section| section.id == bookmark.section_id)
+            .map(|index| index + 1)
+    })
 }
 
 fn show_sources(library: &Library) -> Result<()> {

@@ -30,12 +30,39 @@ pub enum Command {
         #[arg(required = true)]
         alias: Vec<String>,
     },
+    /// List sections/chapters for a work
+    Sections {
+        #[arg(required = true)]
+        alias: Vec<String>,
+    },
+    /// Show library size and corpus statistics
+    Stats,
+    /// Manage saved bookmarks
+    Bookmarks {
+        #[command(subcommand)]
+        command: Option<BookmarkCommand>,
+    },
     /// List source URLs and license notes
     Sources,
     /// Replay the startup banner
     Intro,
     /// Show config path and current settings
     Config,
+}
+
+#[derive(Debug, Subcommand)]
+pub enum BookmarkCommand {
+    /// List saved bookmarks
+    List,
+    /// Add a bookmark for a work and optional section number
+    Add {
+        #[arg(required = true)]
+        reference: Vec<String>,
+    },
+    /// Remove a bookmark by number from the bookmark list
+    Remove { number: usize },
+    /// Remove all bookmarks
+    Clear,
 }
 
 pub fn parse_read_reference(parts: &[String]) -> (String, Option<usize>) {

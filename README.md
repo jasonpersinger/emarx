@@ -4,6 +4,9 @@ Read Marx from the command line.
 
 EMARX is an offline-first terminal reader for public-domain and freely redistributable works by Karl Marx and Friedrich Engels. It provides a full-screen TUI for browsing, reading, searching, bookmarking, and resuming texts, plus copy-friendly plain text CLI output for scripts and pipes.
 
+Web reader: <https://emarx.netlify.app>  
+Repository: <https://github.com/jasonpersinger/emarx>
+
 ## Features
 
 - Single Rust binary named `emarx`
@@ -14,8 +17,18 @@ EMARX is an offline-first terminal reader for public-domain and freely redistrib
 - Theme support: Dialectic Dark, Reading Room, Red Banner, Parchment, Monochrome
 - Offline bundled starter corpus with per-work metadata
 - Plain text output for `read`, `search`, `random`, `today`, `info`, and `sources`
+- Static retro terminal-style web reader deployable to Netlify
 
 ## Install and Run
+
+Install from GitHub:
+
+```sh
+cargo install --git https://github.com/jasonpersinger/emarx
+emarx
+```
+
+Install from a local checkout:
 
 ```sh
 cargo install --path .
@@ -34,6 +47,13 @@ cargo run -- search "commodity"
 cargo test
 ```
 
+Build the static web reader:
+
+```sh
+python3 scripts/build_web.py
+python3 -m http.server 4173 -d web
+```
+
 ## Commands
 
 ```text
@@ -46,6 +66,12 @@ emarx search "commodity"      Search all bundled texts
 emarx random                  Print a random passage
 emarx today                   Print a deterministic passage of the day
 emarx info manifesto          Show source/license metadata
+emarx sections capital        List chapters/sections for a work
+emarx stats                   Show corpus counts
+emarx bookmarks               List saved bookmarks
+emarx bookmarks add capital 15
+emarx bookmarks remove 1
+emarx bookmarks clear
 emarx sources                 List bundled source URLs and license notes
 emarx intro                   Replay startup banner
 emarx config                  Show config path and current settings
@@ -60,11 +86,15 @@ Up/Down        Navigate current panel
 Left/Right     Switch panel
 Tab/Shift-Tab  Switch panel
 Enter          Select
+PageUp/Down    Scroll text by a page
+Home/End       Jump to start/end of active panel
 /              Search within current work
 n / N          Next/previous search result
 t              Cycle theme
 b              Toggle bookmark
+B              Open bookmark browser
 g              Jump to section number
+?              Show help overlay
 q              Quit
 ```
 
