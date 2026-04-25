@@ -231,6 +231,11 @@ main {
   line-height: 1.65;
 }
 
+.about-copy {
+  display: grid;
+  gap: 14px;
+}
+
 .terminal-block {
   min-width: 0;
   max-width: 100%;
