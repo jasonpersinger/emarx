@@ -9,6 +9,9 @@ const state = {
 };
 
 const el = {
+  splash: document.querySelector("#splash"),
+  splashBook: document.querySelector(".splash-book"),
+  reader: document.querySelector("#reader"),
   workList: document.querySelector("#workList"),
   sectionList: document.querySelector("#sectionList"),
   workTitle: document.querySelector("#workTitle"),
@@ -26,6 +29,7 @@ const el = {
 };
 
 async function init() {
+  if (!["dark", "red", "mono"].includes(state.theme)) state.theme = "dark";
   document.documentElement.dataset.theme = state.theme === "dark" ? "" : state.theme;
   state.catalog = await fetchJson("./data/catalog.json");
   renderWorks();
@@ -40,6 +44,62 @@ async function fetchJson(url) {
 }
 
 function bindEvents() {
+  const openReader = () => {
+    el.splash.hidden = true;
+    el.reader.hidden = false;
+    el.workList.querySelector(".active")?.focus();
+  };
+
+  const openSplash = () => {
+    el.reader.hidden = true;
+    el.splash.hidden = false;
+    el.splashBook.focus();
+  };
+
+  el.splash.addEventListener("click", openReader);
+  el.splash.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openReader();
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (el.reader.hidden) return;
+    const activeTag = document.activeElement?.tagName?.toLowerCase();
+    if (activeTag === "input") return;
+
+    if (event.key.toLowerCase() === "q" && !el.reader.hidden) {
+      openSplash();
+      return;
+    }
+
+    if (event.key === "/") {
+      event.preventDefault();
+      el.searchInput.focus();
+      return;
+    }
+
+    if (event.key === "ArrowRight") {
+      event.preventDefault();
+      focusNextPane(1);
+      return;
+    }
+
+    if (event.key === "ArrowLeft") {
+      event.preventDefault();
+      focusNextPane(-1);
+      return;
+    }
+
+    if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+      const button = document.activeElement?.closest?.(".work-button, .section-button");
+      if (!button) return;
+      event.preventDefault();
+      focusAdjacentButton(button, event.key === "ArrowDown" ? 1 : -1);
+    }
+  });
+
   el.searchInput.addEventListener("input", async (event) => {
     state.query = event.target.value.trim();
     if (state.query.length < 2) {
@@ -53,13 +113,37 @@ function bindEvents() {
   });
 
   el.themeButton.addEventListener("click", () => {
-    const themes = ["dark", "reading", "mono"];
+    const themes = ["dark", "red", "mono"];
     state.theme = themes[(themes.indexOf(state.theme) + 1) % themes.length];
     localStorage.setItem("emarx.theme", state.theme);
     document.documentElement.dataset.theme = state.theme === "dark" ? "" : state.theme;
   });
 
   el.bookmarkButton.addEventListener("click", toggleBookmark);
+
+  if (window.location.hash === "#reader") openReader();
+}
+
+function focusNextPane(direction) {
+  const panes = [el.workList, el.sectionList, document.querySelector(".text-scroll")];
+  const activePane = document.activeElement?.closest?.(".works-pane")
+    ? 0
+    : document.activeElement?.closest?.(".sections-pane")
+      ? 1
+      : 2;
+  const next = (activePane + direction + panes.length) % panes.length;
+  if (next === 0 || next === 1) {
+    panes[next].querySelector(".active")?.focus();
+  } else {
+    panes[next].focus();
+  }
+}
+
+function focusAdjacentButton(button, direction) {
+  const buttons = [...button.parentElement.querySelectorAll("button")];
+  const index = buttons.indexOf(button);
+  const next = buttons[Math.max(0, Math.min(buttons.length - 1, index + direction))];
+  next?.focus();
 }
 
 function renderWorks() {
@@ -84,7 +168,6 @@ async function selectWork(workId, sectionIndex = 0) {
   renderHeader();
   renderSections();
   renderText();
-  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 async function loadWork(workId) {

@@ -5,90 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="EMARX is a terminal-style reader for public-domain Marx and Engels texts."
+      content="EMARX is a terminal reader for public-domain Marx and Engels texts."
     />
     <title>EMARX</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <div class="scanline" aria-hidden="true"></div>
-    <div class="page">
-      <header class="masthead">
-        <div class="book-cover" aria-hidden="true">
-          <div class="book-spine"></div>
-          <div class="book-symbol">☭</div>
-          <div class="book-title">EMARX</div>
-        </div>
-
-        <div class="masthead-copy">
-          <p class="prompt">jason@emarx.space:~$ emarx</p>
+    <section id="splash" class="screen splash-screen" aria-label="EMARX startup screen">
+      <div class="splash-book" role="button" tabindex="0" aria-controls="reader">
+        <div class="book-spine" aria-hidden="true"></div>
+        <div class="book-pages" aria-hidden="true"></div>
+        <div class="book-copy">
+          <div class="book-mark" aria-hidden="true">☭</div>
           <h1>EMARX</h1>
-          <p class="tagline">A terminal reader for Marx, Engels, and related public-domain texts.</p>
-          <nav class="top-actions" aria-label="Project links">
-            <a href="#reader">Open reader</a>
-            <a href="#install">Install CLI</a>
-            <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">GitHub</a>
-          </nav>
+          <p>READ MARX FROM THE COMMAND LINE</p>
         </div>
+      </div>
+      <div class="splash-footer">
+        <p>A terminal reader for Marx, Engels, and related public-domain texts.</p>
+        <p>Press Enter to open the library. Esc/q quits the native app.</p>
+        <p class="install-line">cargo install --git https://github.com/jasonpersinger/emarx</p>
+      </div>
+    </section>
+
+    <main id="reader" class="screen reader-screen" hidden>
+      <header class="top-status" aria-label="Application header">
+        <span>EMARX</span>
+        <span>A terminal reader for Marx, Engels, and related public-domain texts.</span>
       </header>
 
-      <section id="install" class="install-bar" aria-label="Install EMARX">
-        <div>
-          <p class="panel-label">install native CLI/TUI</p>
-          <pre><code>cargo install --git https://github.com/jasonpersinger/emarx
-emarx</code></pre>
-        </div>
-        <div>
-          <p class="panel-label">common commands</p>
-          <pre><code>emarx read manifesto
-emarx read "capital vol 1" chapter 15
-emarx search "commodity fetishism"</code></pre>
-        </div>
-      </section>
+      <section class="reader-grid" aria-label="EMARX web reader">
+        <aside class="pane works-pane" aria-label="Works">
+          <div class="pane-title">Works</div>
+          <label class="search-label" for="searchInput">/ search corpus</label>
+          <input id="searchInput" class="search-input" type="search" placeholder="commodity fetishism" />
+          <div id="workList" class="list"></div>
+        </aside>
 
-      <main id="reader" class="reader-layout">
-        <section class="nav-deck" aria-label="Reader navigation">
-          <aside class="panel library-panel" aria-label="Library">
-            <div class="panel-header">library</div>
-            <label class="field-label" for="searchInput">/ search corpus</label>
-            <input id="searchInput" class="search-input" type="search" placeholder="commodity fetishism" />
-            <div class="nav-title">works</div>
-            <div id="workList" class="work-list"></div>
-          </aside>
+        <aside class="pane sections-pane" aria-label="Sections">
+          <div class="pane-title pane-title-row">
+            <span>Sections</span>
+            <span id="progressLabel">0%</span>
+          </div>
+          <div class="progress" aria-hidden="true"><div id="progressBar"></div></div>
+          <div id="sectionList" class="list"></div>
+        </aside>
 
-          <aside class="panel sections-panel" aria-label="Sections">
-            <div class="panel-header panel-header-row">
-              <span>sections</span>
-              <span id="progressLabel">0%</span>
-            </div>
-            <div class="progress"><div id="progressBar"></div></div>
-            <div id="sectionList" class="section-list"></div>
-          </aside>
-        </section>
-
-        <section class="panel text-panel" aria-label="Reader">
-          <header class="reader-header">
+        <section class="pane text-pane" aria-label="Text">
+          <div class="pane-title pane-title-row">
+            <span>Text</span>
+            <span id="sectionNumber"></span>
+          </div>
+          <div class="reader-meta">
             <div>
-              <p class="panel-label">selected work</p>
               <h2 id="workTitle">Loading library...</h2>
               <p id="workMeta"></p>
             </div>
-            <div class="actions">
+            <nav class="reader-actions" aria-label="Reader actions">
               <button id="themeButton" type="button">theme</button>
               <button id="bookmarkButton" type="button">bookmark</button>
               <a id="sourceLink" href="#" target="_blank" rel="noreferrer">source</a>
-            </div>
-          </header>
-
-          <div id="searchResults" class="search-results" hidden></div>
-          <div class="section-heading">
-            <p id="sectionNumber"></p>
-            <h3 id="sectionTitle"></h3>
+            </nav>
           </div>
-          <div id="paragraphs" class="paragraphs"></div>
+          <div class="text-scroll" tabindex="0">
+            <div id="searchResults" class="search-results" hidden></div>
+            <div class="section-heading">
+              <h3 id="sectionTitle"></h3>
+            </div>
+            <div id="paragraphs" class="paragraphs"></div>
+          </div>
         </section>
-      </main>
-    </div>
+      </section>
+
+      <footer class="bottom-status" aria-label="Keyboard help">
+        <span>↑/↓ navigate</span>
+        <span>←/→ or Tab switch</span>
+        <span>Enter select</span>
+        <span>/ search</span>
+        <span>t theme</span>
+        <span>b bookmark</span>
+        <span>q splash</span>
+        <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">install CLI</a>
+      </footer>
+    </main>
 
     <script src="./app.js" type="module"></script>
   </body>
