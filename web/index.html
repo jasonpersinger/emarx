@@ -5,9 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta
       name="description"
-      content="EMARX is a terminal reader for public-domain Marx and Engels texts."
+      content="EMARX is an offline-first CLI/TUI terminal reader for Marx, Engels, and related public-domain texts."
     />
-    <title>EMARX</title>
+    <meta
+      name="keywords"
+      content="Emarx, Marx reader, Engels reader, CLI reader, TUI reader, terminal reader, offline reader, public domain Marx texts"
+    />
+    <meta name="theme-color" content="#d72a3e" />
+    <meta property="og:title" content="EMARX - Offline Marx Reader for the Terminal" />
+    <meta
+      property="og:description"
+      content="An offline-first CLI/TUI reader for Marx, Engels, and related public-domain texts."
+    />
+    <meta property="og:type" content="website" />
+    <title>EMARX - Offline Marx Reader for the Terminal</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -15,11 +26,12 @@
       <header class="system-bar">
         <a href="#top" class="brand">EMARX</a>
         <nav aria-label="Primary navigation">
+          <a href="#what">WHAT</a>
           <a href="#install">INSTALL</a>
+          <a href="#features">FEATURES</a>
           <a href="#reader-demo">DEMO</a>
-          <a href="#about">ABOUT</a>
           <a href="#works">WORKS</a>
-          <a href="#support">SUPPORT</a>
+          <a href="#contact">CONTACT</a>
           <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">GITHUB</a>
         </nav>
       </header>
@@ -27,47 +39,124 @@
       <main id="top">
         <section class="boot-screen" aria-labelledby="hero-title">
           <div class="boot-copy">
-            <p class="eyebrow">EMARX TERMINAL READER v0.1.0</p>
+            <p class="eyebrow">EMARX TERMINAL READER v0.1.0 / RED BANNER MODE</p>
             <h1 id="hero-title">EMARX</h1>
-            <p class="tagline">Read Marx from the command line</p>
+            <p class="tagline">Offline Marx, Engels, and revolutionary texts for the terminal.</p>
             <p>
-              An offline-first CLI/TUI reader for Marx, Engels, and related public-domain texts.
-              Search, browse, bookmark, and read without accounts, feeds, or platform noise.
+              Emarx is an offline-first CLI/TUI reader for Marx, Engels, and related
+              public-domain texts. Search, browse, bookmark, and read without accounts,
+              feeds, tracking dashboards, or platform sludge.
             </p>
             <div class="actions">
-              <a class="button primary" href="#install">INSTALL</a>
+              <a class="button primary" href="#install">INSTALL EMARX</a>
               <a class="button" href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">
                 GITHUB
               </a>
+              <a class="button" href="#reader-demo">TRY WEB READER</a>
             </div>
+            <pre class="prompt-line" aria-label="Example command"><code>$ emarx search "commodity fetishism"</code></pre>
           </div>
 
           <aside class="menu-panel" aria-label="Site menu">
             <div class="panel-title">MAIN MENU</div>
-            <a href="#install"><span>01</span> Install native CLI</a>
-            <a href="#reader-demo"><span>02</span> Open reader demo</a>
-            <a href="#about"><span>03</span> Project notes</a>
-            <a href="#works"><span>04</span> View starter corpus</a>
-            <a href="#support"><span>05</span> Tip jar</a>
+            <a href="#what"><span>01</span> What this is</a>
+            <a href="#install"><span>02</span> Install native CLI</a>
+            <a href="#features"><span>03</span> Feature list</a>
+            <a href="#reader-demo"><span>04</span> Web reader demo</a>
+            <a href="#works"><span>05</span> Starter corpus</a>
+            <a href="#contact"><span>06</span> Contact / links</a>
             <div class="system-note">
-              <p>MODE: OFFLINE READER</p>
+              <p>MODE: OFFLINE-FIRST</p>
+              <p>INTERFACE: CLI / TUI</p>
               <p>CORPUS: PUBLIC-DOMAIN / REDISTRIBUTABLE</p>
             </div>
           </aside>
         </section>
 
+        <section id="what" class="module split-module" aria-labelledby="what-title">
+          <div>
+            <div class="module-label">WHATIS.TXT</div>
+            <h2 id="what-title">A serious reader for unruly texts</h2>
+          </div>
+          <div class="copy-stack">
+            <p>
+              Emarx is a single executable named <code>emarx</code>. Run it with no arguments
+              and it opens a full-screen terminal reader with works, sections, source notes,
+              search, bookmarks, themes, and resume behavior.
+            </p>
+            <p>
+              It is built for public-domain and clearly redistributable writing by Marx,
+              Engels, and related authors. The project starts small on purpose so the corpus
+              can stay auditable as it grows.
+            </p>
+            <p>
+              The website gives you the map. The installed app is the machine.
+            </p>
+          </div>
+        </section>
+
         <section id="install" class="module install-module" aria-labelledby="install-title">
           <div class="module-label">INSTALL.DOC</div>
           <div>
-            <h2 id="install-title">Run EMARX locally</h2>
-            <p>Install the native Rust CLI/TUI with Cargo, then launch the reader from any terminal.</p>
+            <h2 id="install-title">Install the native terminal reader</h2>
+            <p>
+              Install from GitHub with Cargo, then launch the TUI from any terminal.
+              Binary releases are planned; source install is the current path.
+            </p>
+            <div class="actions inline-actions">
+              <a class="button primary" href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">
+                VIEW GITHUB
+              </a>
+              <a class="button" href="https://github.com/jasonpersinger/emarx#readme" target="_blank" rel="noreferrer">
+                READ DOCS
+              </a>
+            </div>
           </div>
-          <pre class="code-block"><code>cargo install --git https://github.com/jasonpersinger/emarx
-emarx</code></pre>
+          <pre class="code-block"><code>$ cargo install --git https://github.com/jasonpersinger/emarx --force
+$ emarx</code></pre>
+          <div class="command-grid" aria-label="Useful commands">
+            <span><code>emarx list</code></span>
+            <span><code>emarx read manifesto</code></span>
+            <span><code>emarx search "commodity"</code></span>
+            <span><code>emarx random</code></span>
+            <span><code>emarx today</code></span>
+            <span><code>emarx sources</code></span>
+          </div>
           <div class="meta-strip">
             <span>requires: Rust + Cargo</span>
-            <span>try: emarx list</span>
-            <span>try: emarx search "commodity fetishism"</span>
+            <span>targets: Linux / macOS / Windows</span>
+            <span>mode: network optional after install</span>
+          </div>
+        </section>
+
+        <section id="features" class="module features-module" aria-labelledby="features-title">
+          <div class="module-label">FEATURES.SYS</div>
+          <h2 id="features-title">Built like old software, useful like real software</h2>
+          <div class="feature-grid">
+            <article>
+              <h3>OFFLINE-FIRST</h3>
+              <p>Read, search, bookmark, and resume without a network connection.</p>
+            </article>
+            <article>
+              <h3>CLI + TUI</h3>
+              <p>Use the full-screen reader or print clean text from commands and pipes.</p>
+            </article>
+            <article>
+              <h3>PUBLIC-DOMAIN CORPUS</h3>
+              <p>Focused on Marx, Engels, and redistributable texts with visible source notes.</p>
+            </article>
+            <article>
+              <h3>LOCAL SEARCH</h3>
+              <p>Find passages across the bundled library without sending queries anywhere.</p>
+            </article>
+            <article>
+              <h3>BOOKMARKS + RESUME</h3>
+              <p>Keep your place. No login ritual, no cloud account, no recommendation feed.</p>
+            </article>
+            <article>
+              <h3>RED BANNER UI</h3>
+              <p>Red-on-black, keyboard-driven, text-heavy, strange enough to remember.</p>
+            </article>
           </div>
         </section>
 
@@ -75,13 +164,19 @@ emarx</code></pre>
           <div class="module-heading">
             <div>
               <div class="module-label">RUNNING PROCESS</div>
-              <h2 id="reader-title">emarx --reader-demo</h2>
+              <h2 id="reader-title">Try the contained web reader</h2>
             </div>
-            <p>The browser demo keeps the CLI shape contained. The installed app opens full-screen in your terminal.</p>
+            <p>
+              This browser version is a contained demo of the reader shape. The installed
+              <code>emarx</code> app runs full-screen in your terminal and keeps its data local.
+            </p>
           </div>
 
-          <div class="terminal-window">
-            <div class="window-title">EMARX / READER DEMO</div>
+          <div class="terminal-window" aria-label="Contained EMARX web reader">
+            <div class="window-title">
+              <span>EMARX / WEB READER DEMO</span>
+              <span>offline corpus loaded</span>
+            </div>
             <div id="reader" class="reader-demo">
               <header class="top-status" aria-label="Application header">
                 <span>EMARX</span>
@@ -143,32 +238,13 @@ emarx</code></pre>
           </div>
         </section>
 
-        <section id="about" class="module about-module" aria-labelledby="about-title">
-          <div class="module-label">ABOUT.TXT</div>
-          <h2 id="about-title">A reader for difficult, necessary texts</h2>
-          <div class="about-copy">
-            <p>
-              Marx is not only a name attached to politics. He was a relentless critic of work,
-              money, property, history, and the systems that teach people to mistake exploitation
-              for common sense. His writing can be dense, funny, furious, technical, and startlingly
-              alive.
-            </p>
-            <p>
-              EMARX is built around the idea that these texts deserve a quiet, durable reading
-              environment: no feed, no account, no recommendation engine, no decoration competing
-              with the page. Just a terminal, a corpus, search, bookmarks, and source notes.
-            </p>
-            <p>
-              The goal is to make public-domain Marx and Engels texts easier to keep close at hand,
-              while treating sources and copyright status with care. The project starts small on
-              purpose so the library can stay auditable as it grows.
-            </p>
-          </div>
-        </section>
-
         <section id="works" class="module works-module" aria-labelledby="works-title">
           <div class="module-label">LIBRARY.IDX</div>
-          <h2 id="works-title">Included starter corpus</h2>
+          <h2 id="works-title">Starter corpus</h2>
+          <p>
+            The bundled library is intentionally small and auditable. Each work carries
+            source and license metadata so the project can grow without getting sloppy.
+          </p>
           <ul class="works-list">
             <li>The Communist Manifesto</li>
             <li>Wage-Labour and Capital</li>
@@ -181,19 +257,27 @@ emarx</code></pre>
           </ul>
         </section>
 
-        <section id="support" class="module support-module" aria-labelledby="support-title">
-          <div class="module-label">SUPPORT.EXE</div>
-          <h2 id="support-title">Tip jar</h2>
-          <p>
-            EMARX is a small independent project. Support helps with hosting, development time,
-            and the slow work of expanding the library carefully.
-          </p>
-          <a class="button primary" href="https://ko-fi.com/emarx" target="_blank" rel="noreferrer">Support on Ko-fi</a>
+        <section id="contact" class="module contact-module" aria-labelledby="contact-title">
+          <div>
+            <div class="module-label">CONTACT.LOG</div>
+            <h2 id="contact-title">Project links and contact</h2>
+            <p>
+              Questions, source corrections, copyright notes, or comradely bug reports:
+              <a href="mailto:hello@emarx.space">hello@emarx.space</a>.
+            </p>
+          </div>
+          <div class="link-grid">
+            <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">GitHub repository</a>
+            <a href="https://github.com/jasonpersinger/emarx#readme" target="_blank" rel="noreferrer">Documentation</a>
+            <a href="https://ko-fi.com/emarx" target="_blank" rel="noreferrer">Support on Ko-fi</a>
+            <a href="mailto:hello@emarx.space">hello@emarx.space</a>
+          </div>
         </section>
       </main>
 
       <footer class="site-footer">
-        <span>WORKING PEOPLE OF ALL COUNTRIES, UNITE!</span>
+        <span>WORKING PEOPLE OF ALL COUNTRIES, UNITE.</span>
+        <a href="mailto:hello@emarx.space">hello@emarx.space</a>
         <a href="https://ko-fi.com/emarx" target="_blank" rel="noreferrer">ko-fi.com/emarx</a>
         <a href="https://github.com/jasonpersinger/emarx" target="_blank" rel="noreferrer">github.com/jasonpersinger/emarx</a>
       </footer>
